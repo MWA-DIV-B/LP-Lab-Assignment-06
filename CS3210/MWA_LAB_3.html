@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do List</title>
+  <style>
+    /* Styles as before */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <form method="post">
+      <label for="taskName">New Task:</label>
+      <input type="text" id="taskName" name="taskName" required>
+      <input type="submit" name="addTask" value="Add">
+    </form>
+    
+    <h2>Tasks</h2>
+    <ul>
+      <?php
+      session_start();
+      
+      if (!isset($_SESSION['tasks'])) {
+          $_SESSION['tasks'] = array();
+      }
+      
+      if (isset($_POST['addTask'])) {
+          $taskName = $_POST['taskName'];
+          
+          if (!empty($taskName)) {
+              $task = array(
+                  'name' => $taskName,
+                  'completed' => false
+              );
+              
+              array_push($_SESSION['tasks'], $task);
+          }
+      }
+      
+      foreach ($_SESSION['tasks'] as $index => $task) {
+          $taskName = $task['name'];
+          $completed = $task['completed'] ? 'completed' : '';
+          
+          echo '<li>';
+          echo '<input type="checkbox" name="completed[]" value="' . $index . '" ' . ($completed ? 'checked' : '') . '>';
+          echo '<span class="' . $completed . '">' . $taskName . '</span>';
+          echo '<button name="removeTask" value="' . $index . '">Remove</button>';
+          echo '</li>';
+      }
+      
+      if (isset($_POST['removeTask'])) {
+          $index = $_POST['removeTask'];
+          unset($_SESSION['tasks'][$index]);
+      }
+      ?>
+    </ul>
+  </div>
+</body>
+</html>
